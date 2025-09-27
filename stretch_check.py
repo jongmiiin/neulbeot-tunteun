@@ -205,7 +205,7 @@ class StretchFSM:
         self.baseline_tilt = 0.0
 
     def step(self, lms):
-        instruction = "Do some stretching! Interlace your fingers and stretch upward."
+        instruction = "Do some stretching up!"
         progress = 0.0
         tilt_deg = 0.0
         debug = {}
@@ -226,7 +226,7 @@ class StretchFSM:
         if self.state == "CENTER":
             # 업 유지 체크 + 베이스라인 수집
             self.hold_up.update(arms_ok)
-            instruction = "Do some stretching! Interlace your fingers and stretch upward."
+            instruction = "Do some stretching up!"
             progress = self.hold_up.progress01()
 
             if arms_ok:
@@ -246,7 +246,7 @@ class StretchFSM:
             tilt_rel = tilt_abs - self.baseline_tilt
             cond = arms_ok and (tilt_rel <= -TILT_DEG_TARGET)
             self.hold_tilt.update(cond)
-            instruction = "Tilt to the right! (about 20°)"
+            instruction = "Tilt to the right!"
             progress = self.hold_tilt.progress01()
             tilt_deg = tilt_rel
             if self.hold_tilt.done():
@@ -257,20 +257,20 @@ class StretchFSM:
             tilt_rel = tilt_abs - self.baseline_tilt
             cond = arms_ok and (tilt_rel >= TILT_DEG_TARGET)
             self.hold_tilt.update(cond)
-            instruction = "Tilt to the left! (about 20°)"
+            instruction = "Tilt to the left!"
             progress = self.hold_tilt.progress01()
             tilt_deg = tilt_rel
             if self.hold_tilt.done():
                 self.state = "DONE"
 
         elif self.state == "DONE":
-            instruction = "Stretching complete! Great job :)"
+            instruction = "Stretching complete :)"
             progress = 1.0
             tilt_deg = tilt_abs - self.baseline_tilt
 
         # 팔이 내려오면 안내 보강(상태는 유지)
         if self.state in ("TILT_LEFT", "TILT_RIGHT") and not arms_ok:
-            instruction += "  (Keep raising your arms upward!)"
+            instruction += "  (Keep your arms up!)"
 
         debug["baseline_tilt"] = self.baseline_tilt
         return self.state, instruction, progress, tilt_deg, debug
